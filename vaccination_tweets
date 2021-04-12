@@ -1,0 +1,30 @@
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import re
+
+import nltk
+
+nltk.download('vader_lexicon')
+
+
+f_data = pd.read_csv('vaccination_tweets.csv')
+f_data.head(3)
+#%%
+#WORD PREPROCESSING
+#Remove twitter handlers
+f_data.text = f_data.text.apply(lambda x:re.sub('@[^\s]+','',x))
+
+#remove hashtags
+f_data.text = f_data.text.apply(lambda x:re.sub(r'\B#\S+','',x))
+
+
+# Remove URLS
+f_data.text = f_data.text.apply(lambda x:re.sub(r"http\S+", "", x))
+
+# Remove all the special characters
+f_data.text = f_data.text.apply(lambda x:' '.join(re.findall(r'\w+', x)))
+
+#remove all single characters
+f_data.text = f_data.text.apply(lambda x:re.sub(r'\s+[a-zA-Z]\s+', '', x))
+
+# Substituting multiple spaces with single space
+f_data.text = f_data.text.apply(lambda x:re.sub(r'\s+', ' ', x, flags=re.I))
